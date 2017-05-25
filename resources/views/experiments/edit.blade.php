@@ -36,7 +36,7 @@
                         </div>
                         <div class="form-group">
                             {!! Form::label('Due Date') !!}
-                            {!! Form::date('due_date', \Carbon\Carbon::now(), array('class' => 'form-control', 'value'=>'{{ old("due_date") }}')) !!}
+                            {!! Form::date('due_date', old("due_date"), array('class' => 'form-control', 'value'=>'{{ old("due_date") }}')) !!}
                         </div>
                         <hr>
                         <h3>Brainstorm</h3>
@@ -88,11 +88,11 @@
                         <h3>Build</h3>
                         <div class="form-group">
                             {!! Form::label('Build Start Date') !!}
-                            {!! Form::date('bl_startdate', \Carbon\Carbon::now(), array('class' => 'form-control', 'value'=>'{{ old("bl_startdate") }}')) !!}
+                            {!! Form::date('bl_startdate', old("bl_startdate"), array('class' => 'form-control', 'value'=>'{{ old("bl_startdate") }}')) !!}
                         </div>
                         <div class="form-group">
                             {!! Form::label('Build End Date') !!}
-                            {!! Form::date('bl_enddate', \Carbon\Carbon::now(), array('class' => 'form-control', 'value'=>'{{ old("bl_enddate") }}')) !!}
+                            {!! Form::date('bl_enddate', old("bl_startdate"), array('class' => 'form-control', 'value'=>'{{ old("bl_enddate") }}')) !!}
                         </div>
                         <div class="form-group">
                             {!! Form::label('Assignees') !!}
@@ -106,11 +106,11 @@
                         <h3>Test</h3>
                         <div class="form-group">
                             {!! Form::label('Test Start Date') !!}
-                            {!! Form::date('ts_startdate', \Carbon\Carbon::now(), array('class' => 'form-control', 'value'=>'{{ old("ts_startdate") }}')) !!}
+                            {!! Form::date('ts_startdate', old("ts_startdate"), array('class' => 'form-control', 'value'=>'{{ old("ts_startdate") }}')) !!}
                         </div>
                         <div class="form-group">
                             {!! Form::label('Test End Date') !!}
-                            {!! Form::date('ts_enddate', \Carbon\Carbon::now(), array('class' => 'form-control', 'value'=>'{{ old("ts_enddate") }}')) !!}
+                            {!! Form::date('ts_enddate', old("ts_enddate"), array('class' => 'form-control', 'value'=>'{{ old("ts_enddate") }}')) !!}
                         </div>
                         <hr>
                         <h3>Analyze</h3>
