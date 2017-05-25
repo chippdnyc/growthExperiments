@@ -9,6 +9,8 @@ use App\Experiment;
 use App\Http\Requests\ExperienceFormRequest;
 use Illuminate\Support\Facades\Auth;
 
+use Carbon\Carbon;
+
 class ExperimentController extends Controller
 {
 
@@ -36,6 +38,132 @@ class ExperimentController extends Controller
                                     ->paginate(7);
 
         return view('experiments/list')->with('experiments', $experiments);
+    }
+
+    /**
+     * Display a listing of the resource (reports).
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function reports()
+    {
+        $params = str_replace("?", '#', \Request::getQueryString());
+        $params = str_replace("&", '#', $params);
+        $params = str_replace("=", '#', $params);
+        $params = explode('#', $params);
+
+        $date       = \Request::get('date');
+        $phase      = \Request::get('phase');
+        $priority   = \Request::get('priority');
+        $startdate  = null;
+        $enddate    = null;
+        $url        = null;
+
+        if (count($params) > 1) {
+            foreach ($params as $key => $param) {
+                if ($key == 0) {
+                    $url = '?'.$param.'=';
+                } else if ($key == 2) {
+                    $url = $url.'&'.$param.'=';
+                } else if ($key == 4) {
+                    $url = $url.'&'.$param.'=';
+                } else {
+                    $url = $url.$param.'&';
+                }
+            }
+        } else {
+            $url = '?';
+        }
+
+        switch ($date) {
+            case 'last3months':
+                $startdate  = new Carbon('first day of 3 months ago 00:00:00');
+                $enddate    = new Carbon('last day of this month 23:59:59');
+                break;
+            case 'lastmonth':
+                $startdate  = new Carbon('first day of last month 00:00:00');
+                $enddate    = new Carbon('last day of last month 23:59:59');
+                break;
+            case 'thismonth':
+                $startdate  = new Carbon('first day of this month 00:00:00');
+                $enddate    = new Carbon('last day of this month 23:59:59');
+                break;
+            case 'lastweek':
+                $startdate  = new Carbon('monday last week 00:00:00');
+                $enddate    = new Carbon('sunday last week 23:59:59');
+                break;
+            case 'thisweek':
+                $startdate  = new Carbon('monday this week 00:00:00');
+                $enddate    = new Carbon('sunday this week 23:59:59');
+                break;
+            default:
+                $date = null;
+                break;
+        }
+
+        if ($date && $priority && $phase) {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->whereBetween('created_at', [$startdate, $enddate])
+                                        ->where('pr_priority', $priority)
+                                        ->where('phase', $phase)
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        } else if ($date && $priority) {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->whereBetween('created_at', [$startdate, $enddate])
+                                        ->where('pr_priority', $priority)
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        } else if ($date && $phase) {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->whereBetween('created_at', [$startdate, $enddate])
+                                        ->where('phase', $phase)
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        } else if ($date) {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->whereBetween('created_at', [$startdate, $enddate])
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        } else if ($priority && $phase) {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->where('pr_priority', $priority)
+                                        ->where('phase', $phase)
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        } else if ($priority) {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->where('pr_priority', $priority)
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        } else if ($phase) {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->where('phase', $phase)
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        } else {
+            $experiments = Experiment::where('archived', '=', false)
+                                        ->orderBy('pr_priority', 'asc')
+                                        ->orderBy('phase', 'asc')
+                                        ->orderBy('due_date', 'asc')
+                                        ->paginate(7);
+        }
+
+        return view('experiments/reports')->with(['experiments' => $experiments, 'params' => $url]);
     }
 
     /**
@@ -175,5 +303,22 @@ class ExperimentController extends Controller
         Experiment::destroy($id);
 
         return \Redirect::route('experiments')->with('message', 'Experiment deleted successfully!');
+    }
+
+    /**
+     * Get Report from Experiment
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function report($id)
+    {
+        $experiment = Experiment::find($id);
+
+        return view('experiments/report')->with('data', array('experiment' => $experiment,
+                                                            'selects' => array('phases' => Experiment::getPhases(),
+                                                                               'percentages' => Experiment::getPercentages(),
+                                                                                'efforts' => Experiment::getEfforts(),
+                                                                                'priorities' => Experiment::getPriorities())));
     }
 }

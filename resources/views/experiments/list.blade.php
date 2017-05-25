@@ -46,6 +46,9 @@
                                     </div>
                                 </td>
                                 <td class="text-center">
+                                    <a title="Report" href="/experiments/report/{{ $experiment->id }}">
+                                        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                                    </a>
                                     <a title="Edit" href="/experiments/edit/{{ $experiment->id }}" />
                                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </a>

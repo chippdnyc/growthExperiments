@@ -30,3 +30,5 @@ Route::post('/experiments/edit/{id}', 'ExperimentController@update')->name('expe
 Route::get('/experiments/delete/{id}', 'ExperimentController@destroy');
 Route::get('/experiments/archive/{id}', 'ExperimentController@archive');
 Route::get('/experiments/unarchive/{id}', 'ExperimentController@unarchive');
+Route::get('/experiments/report/{id}', 'ExperimentController@report')->name('experiments.report');
+Route::get('/experiments/reports', 'ExperimentController@reports')->name('experiments.reports');
